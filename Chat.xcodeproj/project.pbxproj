@@ -13,6 +13,8 @@
 		675F2D881D5D627700121FB0 /* Chat.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 675F2D861D5D627700121FB0 /* Chat.xcdatamodeld */; };
 		675F2D8A1D5D627700121FB0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 675F2D891D5D627700121FB0 /* Assets.xcassets */; };
 		675F2D8D1D5D627700121FB0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 675F2D8B1D5D627700121FB0 /* LaunchScreen.storyboard */; };
+		675F2D951D5D672700121FB0 /* FriendCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675F2D941D5D672700121FB0 /* FriendCell.swift */; };
+		675F2D971D5D682F00121FB0 /* MessageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 675F2D961D5D682F00121FB0 /* MessageView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		675F2D891D5D627700121FB0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		675F2D8C1D5D627700121FB0 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		675F2D8E1D5D627700121FB0 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		675F2D941D5D672700121FB0 /* FriendCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FriendCell.swift; sourceTree = "<group>"; };
+		675F2D961D5D682F00121FB0 /* MessageView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 				675F2D8B1D5D627700121FB0 /* LaunchScreen.storyboard */,
 				675F2D8E1D5D627700121FB0 /* Info.plist */,
 				675F2D861D5D627700121FB0 /* Chat.xcdatamodeld */,
+				675F2D941D5D672700121FB0 /* FriendCell.swift */,
+				675F2D961D5D682F00121FB0 /* MessageView.swift */,
 			);
 			path = Chat;
 			sourceTree = "<group>";
@@ -142,6 +148,8 @@
 				675F2D881D5D627700121FB0 /* Chat.xcdatamodeld in Sources */,
 				675F2D821D5D627700121FB0 /* ViewController.swift in Sources */,
 				675F2D801D5D627700121FB0 /* AppDelegate.swift in Sources */,
+				675F2D951D5D672700121FB0 /* FriendCell.swift in Sources */,
+				675F2D971D5D682F00121FB0 /* MessageView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
