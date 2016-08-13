@@ -10,6 +10,8 @@ import UIKit
 
 class FriendViewController: UICollectionViewController {
 
+    var messages: [Message]?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
@@ -18,6 +20,7 @@ class FriendViewController: UICollectionViewController {
         collectionView?.backgroundColor = UIColor.whiteColor()
         collectionView?.alwaysBounceVertical = true
         
+        setUpData()
     }
 
     override func didReceiveMemoryWarning() {
@@ -26,7 +29,11 @@ class FriendViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 3
+        if let count = messages?.count{
+            return count
+        }
+        
+        return 0
     }
     
     override func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
@@ -37,8 +44,10 @@ class FriendViewController: UICollectionViewController {
         cell.readReceiptImageView.layer.cornerRadius = cell.readReceiptImageView.frame.size.width/2
         cell.readReceiptImageView.layer.masksToBounds = true
         
-        
-        
+        if let message = messages?[indexPath.item]{
+            cell.message = message
+            
+        }
         
         return cell
         

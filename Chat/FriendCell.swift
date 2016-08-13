@@ -11,8 +11,6 @@ import UIKit
 class FriendCell: UICollectionViewCell {
     
     @IBOutlet weak var profileImageView: UIImageView!
-
-    @IBOutlet weak var messageView: MessageView!
     
     @IBOutlet weak var nameLabel: UILabel!
     
@@ -21,5 +19,22 @@ class FriendCell: UICollectionViewCell {
     @IBOutlet weak var timeLabel: UILabel!
     @IBOutlet weak var readReceiptImageView: UIImageView!
     
+    var message: Message? {
+        didSet{
+            messageLabel.text = message?.text
+            nameLabel.text = message?.friend?.name
+            
+            if let profileImageName = message?.friend?.profileImageName{
+                profileImageView.image = UIImage(named: profileImageName)
+                readReceiptImageView.image = UIImage(named: profileImageName)
+            }
+            
+            if let date = message?.date{
+                let dateFormatter = NSDateFormatter()
+                dateFormatter.dateFormat = "h:mm a"
+                timeLabel.text = dateFormatter.stringFromDate(date)
+            }
+        }
+    }
     
 }
