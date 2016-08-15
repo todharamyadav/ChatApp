@@ -53,9 +53,6 @@ class FriendViewController: UICollectionViewController {
         
     }
     
-    func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
-        <#code#>
-    }
 
 }
 
