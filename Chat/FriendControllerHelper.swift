@@ -70,8 +70,8 @@ extension FriendViewController{
             steve.profileImageName = "Steve"
             
             createMessage("My name is Steve", friend: steve, context: context, minutesAgo: 3)
-            createMessage("How arre you", friend: steve, context: context, minutesAgo: 2)
-            createMessage("M doing good", friend: steve, context: context, minutesAgo: 1)
+            createMessage("How arre you.. I am asking because it has been long time since i saw you.", friend: steve, context: context, minutesAgo: 2)
+            createMessage("M doing good..I am so glad that u asked me. it has been long time sicne we met and we should hang out sometime in the city or grab beer at a bar. dfjbv jv jdbvh hdjb", friend: steve, context: context, minutesAgo: 1)
             
             let donald = NSEntityDescription.insertNewObjectForEntityForName("Friend", inManagedObjectContext: context) as! Friend
             donald.name = "Donald"
@@ -79,13 +79,24 @@ extension FriendViewController{
             
             createMessage("You are fired", friend: donald, context: context, minutesAgo: 5)
             
+            let gandhi = NSEntityDescription.insertNewObjectForEntityForName("Friend", inManagedObjectContext: context) as! Friend
+            gandhi.name = "Mahatma Gandhi"
+            gandhi.profileImageName = "Gandhi"
+            
+            createMessage("Love Peace and Joy", friend: gandhi, context: context, minutesAgo: 60*24)
+            
+            let hillary = NSEntityDescription.insertNewObjectForEntityForName("Friend", inManagedObjectContext: context) as! Friend
+            hillary.name = "Hillary Clinton"
+            hillary.profileImageName = "Hillary"
+            
+            createMessage("Vote for me.", friend: hillary, context: context, minutesAgo: 60*24*8)
+
+            
             do{
                 try (context.save())
             }catch let err{
                 print(err)
             }
-            
-            //messages = [message,steveMessage]
         }
         
         loadData()
@@ -107,8 +118,6 @@ extension FriendViewController{
                 messages = [Message]()
                 
                 for friend in friends{
-                    print(friend.name)
-                    
                     
                     let fetchRequest = NSFetchRequest(entityName: "Message")
                     fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]

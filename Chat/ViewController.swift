@@ -60,8 +60,6 @@ class FriendViewController: UICollectionViewController {
             if let selectedCell = sender as? FriendCell{
                 let indexPath = collectionView?.indexPathForCell(selectedCell)
                 destination.friend = messages?[indexPath!.item].friend
-                
-                print(destination.friend)
             }
         }
     }

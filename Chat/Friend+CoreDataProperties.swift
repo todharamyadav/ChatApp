@@ -2,7 +2,7 @@
 //  Friend+CoreDataProperties.swift
 //  Chat
 //
-//  Created by Dharamvir on 8/12/16.
+//  Created by Dharamvir on 8/16/16.
 //  Copyright © 2016 Dharamvir. All rights reserved.
 //
 //  Choose "Create NSManagedObject Subclass…" from the Core Data editor menu
