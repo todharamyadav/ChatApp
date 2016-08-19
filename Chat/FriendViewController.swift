@@ -7,10 +7,19 @@
 //
 
 import UIKit
+import CoreData
 
 class FriendViewController: UICollectionViewController {
 
     var messages: [Message]?
+    
+    lazy var fetchResultController: NSFetchedResultsController = {
+        let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context = delegate.managedObjectContext
+        let fetchRequest = NSFetchRequest(entityName: "Friend")
+        
+        let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
