@@ -53,15 +53,23 @@ class FriendViewController: UICollectionViewController {
         
     }
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        if segue.identifier == "ShowMessages"{
-            let destination = segue.destinationViewController as! chatLogCollectionViewController
-            
-            if let selectedCell = sender as? FriendCell{
-                let indexPath = collectionView?.indexPathForCell(selectedCell)
-                destination.friend = messages?[indexPath!.item].friend
-            }
-        }
+//    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+//        if segue.identifier == "ShowMessages"{
+//            let destination = segue.destinationViewController as! chatLogCollectionViewController
+//            
+//            if let selectedCell = sender as? FriendCell{
+//                let indexPath = collectionView?.indexPathForCell(selectedCell)
+//                destination.friend = messages?[indexPath!.item].friend
+//            }
+//        }
+//    }
+    
+    override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
+        let layout = UICollectionViewFlowLayout()
+        let controller = chatLogCollectionViewController(collectionViewLayout: layout)
+        controller.friend = messages?[indexPath.item].friend
+        navigationController?.pushViewController(controller, animated: true)
+        
     }
 }
 

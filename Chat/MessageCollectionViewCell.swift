@@ -49,6 +49,7 @@ class MessageCollectionViewCell: UICollectionViewCell {
         addSubview(bubbleTextView)
         addSubview(messageTextView)
     
+
 //        addSubview(profileImageview)
 //        profileImageview.translatesAutoresizingMaskIntoConstraints = false
 //        addConstraints(NSLayoutConstraint.constraintsWithVisualFormat("H:|-8-[v0(30)]|", options: NSLayoutFormatOptions(), metrics: nil, views: ["v0": profileImageview]))

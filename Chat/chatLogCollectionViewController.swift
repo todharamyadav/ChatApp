@@ -7,20 +7,21 @@
 //
 
 import UIKit
+import CoreData
 
 private let reuseIdentifier = "Cell"
 
-class chatLogCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout {
+class chatLogCollectionViewController: UICollectionViewController, UICollectionViewDelegateFlowLayout, NSFetchedResultsControllerDelegate {
     
     var friend: Friend?{
         didSet{
             navigationItem.title = friend?.name
-            messages = friend?.messages?.allObjects as? [Message]
-            messages = messages?.sort({$0.date?.compare($1.date!) == .OrderedAscending})
+//            messages = friend?.messages?.allObjects as? [Message]
+//            messages = messages?.sort({$0.date?.compare($1.date!) == .OrderedAscending})
         }
     }
     
-    var messages: [Message]?
+    //var messages: [Message]?
     
     let messageInputContainerView: UIView = {
        let view = UIView()
@@ -48,16 +49,17 @@ class chatLogCollectionViewController: UICollectionViewController, UICollectionV
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context = delegate.managedObjectContext
         
-        let message = FriendViewController.createMessage(inputTextField.text!, friend: friend!, context: context, minutesAgo: 0, isSender: true)
-        
+//        let message = FriendViewController.createMessage(inputTextField.text!, friend: friend!, context: context, minutesAgo: 0, isSender: true)
+        FriendViewController.createMessage(inputTextField.text!, friend: friend!, context: context, minutesAgo: 0, isSender: true)
         do{
             try context.save()
-            messages?.append(message)
-            
-            let insertionIndexPath = NSIndexPath(forItem: messages!.count - 1, inSection: 0)
-            collectionView?.insertItemsAtIndexPaths([insertionIndexPath])
-            self.collectionView?.scrollToItemAtIndexPath(insertionIndexPath, atScrollPosition: .Bottom, animated: true)
             inputTextField.text = nil
+//            messages?.append(message)
+//            
+//            let insertionIndexPath = NSIndexPath(forItem: messages!.count - 1, inSection: 0)
+//            collectionView?.insertItemsAtIndexPaths([insertionIndexPath])
+//            self.collectionView?.scrollToItemAtIndexPath(insertionIndexPath, atScrollPosition: .Bottom, animated: true)
+//            inputTextField.text = nil
             
         } catch let err{
             print(err)
@@ -70,24 +72,69 @@ class chatLogCollectionViewController: UICollectionViewController, UICollectionV
     func simulate(){
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context = delegate.managedObjectContext
-        let message = FriendViewController.createMessage("Here is a text message send ", friend: friend!, context: context, minutesAgo: 2)
+//        let message = FriendViewController.createMessage("Here is a text message send ", friend: friend!, context: context, minutesAgo: 2)
+        FriendViewController.createMessage("Here is a text message send ", friend: friend!, context: context, minutesAgo: 0)
+        FriendViewController.createMessage("and that is it ", friend: friend!, context: context, minutesAgo: 0)
         do{
             try context.save()
-            messages?.append(message)
-            messages = messages?.sort({$0.date?.compare($1.date!) == .OrderedAscending})
             
-            if let item = messages?.indexOf(message){
-                let indexPath = NSIndexPath(forItem: item, inSection: 0)
-                collectionView?.insertItemsAtIndexPaths([indexPath])
-            }
+//            messages?.append(message)
+//            messages = messages?.sort({$0.date?.compare($1.date!) == .OrderedAscending})
+//            
+//            if let item = messages?.indexOf(message){
+//                let indexPath = NSIndexPath(forItem: item, inSection: 0)
+//                collectionView?.insertItemsAtIndexPaths([indexPath])
+//            }
+            
         }
         catch let err{
         print(err)
         }
     }
     
+    lazy var fetchedRequestController: NSFetchedResultsController = {
+        let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        let context = delegate.managedObjectContext
+        let fetchRequest = NSFetchRequest(entityName: "Message")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: true)]
+        fetchRequest.predicate = NSPredicate(format: "friend.name = %@", self.friend!.name!)
+        let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        frc.delegate = self
+        return frc
+    }()
+    
+    var blockOperations = [NSBlockOperation]()
+    
+    func controller(controller: NSFetchedResultsController, didChangeObject anObject: AnyObject, atIndexPath indexPath: NSIndexPath?, forChangeType type: NSFetchedResultsChangeType, newIndexPath: NSIndexPath?) {
+        if type == .Insert{
+            blockOperations.append(NSBlockOperation(block: {
+                self.collectionView?.insertItemsAtIndexPaths([newIndexPath!])
+            }))
+            //collectionView?.scrollToItemAtIndexPath(newIndexPath!, atScrollPosition: .Bottom, animated: true)
+        }
+    }
+    
+    func controllerDidChangeContent(controller: NSFetchedResultsController) {
+        collectionView?.performBatchUpdates({
+            for operation in self.blockOperations{
+                operation.start()
+            }
+            }, completion: { (completed) in
+                let lastItem = self.fetchedRequestController.sections![0].numberOfObjects - 1
+                let indexPath = NSIndexPath(forItem: lastItem, inSection: 0)
+                self.collectionView?.scrollToItemAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
+        })
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        do {
+            try fetchedRequestController.performFetch()
+        }
+        catch let err{
+            print(err)
+        }
         
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Simulate", style: .Plain, target: self, action: #selector(simulate))
         
@@ -123,10 +170,13 @@ class chatLogCollectionViewController: UICollectionViewController, UICollectionV
                 self.view.layoutIfNeeded()
                 }, completion: { (completed) in
                     
-                    if isKeyBoardShowing{
-                        let indexPath = NSIndexPath(forItem: self.messages!.count - 1, inSection: 0)
-                        self.collectionView?.scrollToItemAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
-                    }
+//                    if isKeyBoardShowing{
+//                        let indexPath = NSIndexPath(forItem: self.messages!.count - 1, inSection: 0)
+//                        self.collectionView?.scrollToItemAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
+//                    }
+                    let lastItem = self.fetchedRequestController.sections![0].numberOfObjects - 1
+                    let indexPath = NSIndexPath(forItem: lastItem, inSection: 0)
+                    self.collectionView?.scrollToItemAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: true)
             })
         }
     }
@@ -140,11 +190,11 @@ class chatLogCollectionViewController: UICollectionViewController, UICollectionV
         messageInputContainerView.addSubview(sendButton)
         messageInputContainerView.addSubview(topBorderView)
         
-        view.addConstraintWithVisualFormat("H:|-8-[v0][v1(60)]|", views: inputTextField, sendButton)
-        view.addConstraintWithVisualFormat("V:|[v0]|", views: inputTextField)
-        view.addConstraintWithVisualFormat("V:|[v0]|", views: sendButton)
-        view.addConstraintWithVisualFormat("H:|[v0]|", views: topBorderView)
-        view.addConstraintWithVisualFormat("V:|[v0(0.5)]", views: topBorderView)
+        messageInputContainerView.addConstraintWithVisualFormat("H:|-8-[v0][v1(60)]|", views: inputTextField, sendButton)
+        messageInputContainerView.addConstraintWithVisualFormat("V:|[v0]|", views: inputTextField)
+        messageInputContainerView.addConstraintWithVisualFormat("V:|[v0]|", views: sendButton)
+        messageInputContainerView.addConstraintWithVisualFormat("H:|[v0]|", views: topBorderView)
+        messageInputContainerView.addConstraintWithVisualFormat("V:|[v0(0.5)]", views: topBorderView)
     }
 
     override func didReceiveMemoryWarning() {
@@ -154,7 +204,7 @@ class chatLogCollectionViewController: UICollectionViewController, UICollectionV
 
 
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let count = messages?.count{
+        if let count = fetchedRequestController.sections?[0].numberOfObjects{
             return count
         }
         return 0
@@ -164,9 +214,12 @@ class chatLogCollectionViewController: UICollectionViewController, UICollectionV
         let cell = collectionView.dequeueReusableCellWithReuseIdentifier(reuseIdentifier, forIndexPath: indexPath) as! MessageCollectionViewCell
     
         // Configure the cell
-        cell.messageTextView.text = messages?[indexPath.item].text
         
-        if let message=messages?[indexPath.row], messageText = message.text{
+        let message = fetchedRequestController.objectAtIndexPath(indexPath) as! Message
+        
+        cell.messageTextView.text = message.text
+        
+        if let messageText = message.text{
             
             let size = CGSizeMake(250, 1000)
             let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
@@ -197,7 +250,9 @@ class chatLogCollectionViewController: UICollectionViewController, UICollectionV
     }
     
     func collectionView(collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAtIndexPath indexPath: NSIndexPath) -> CGSize{
-        if let messageText = messages?[indexPath.item].text{
+        
+        let message = fetchedRequestController.objectAtIndexPath(indexPath) as! Message
+        if let messageText = message.text{
             
             let size = CGSizeMake(250, 1000)
             let options = NSStringDrawingOptions.UsesFontLeading.union(.UsesLineFragmentOrigin)
