@@ -92,7 +92,7 @@ extension FriendViewController{
             }
         }
         
-        loadData()
+//        loadData()
     }
     
     private func createSteveMessages(context: NSManagedObjectContext){
@@ -120,52 +120,54 @@ extension FriendViewController{
         message.friend = friend
         message.isSender = NSNumber(bool: isSender)
         
+        friend.lastMessage = message
+        
         return message
     }
     
-    func loadData(){
-        let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
-        
-        if let context = delegate?.managedObjectContext{
-            
-            if let friends = fetchFriends(){
-                messages = [Message]()
-                
-                for friend in friends{
-                    
-                    let fetchRequest = NSFetchRequest(entityName: "Message")
-                    fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
-                    fetchRequest.predicate = NSPredicate(format: "friend.name = %@", friend.name!)
-                    fetchRequest.fetchLimit = 1
-                    
-                    do{
-                        let fetchedMessages = try context.executeFetchRequest(fetchRequest) as? [Message]
-                        messages?.appendContentsOf(fetchedMessages!)
-                    }catch let err{
-                        print(err)
-                    }
-                }
-                messages = messages?.sort({$0.date?.compare($1.date!) == .OrderedDescending})
-            }
-            
-        }
-    }
-    
-    func fetchFriends() -> [Friend]?{
-        let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
-        
-        if let context = delegate?.managedObjectContext{
-            let request = NSFetchRequest(entityName: "Friend")
-            
-            do{
-                return try context.executeFetchRequest(request) as? [Friend]
-            }catch let err{
-                print(err)
-            }
-            
-        }
-        
-        return nil
-    }
+//    func loadData(){
+//        let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
+//        
+//        if let context = delegate?.managedObjectContext{
+//            
+//            if let friends = fetchFriends(){
+//                messages = [Message]()
+//                
+//                for friend in friends{
+//                    
+//                    let fetchRequest = NSFetchRequest(entityName: "Message")
+//                    fetchRequest.sortDescriptors = [NSSortDescriptor(key: "date", ascending: false)]
+//                    fetchRequest.predicate = NSPredicate(format: "friend.name = %@", friend.name!)
+//                    fetchRequest.fetchLimit = 1
+//                    
+//                    do{
+//                        let fetchedMessages = try context.executeFetchRequest(fetchRequest) as? [Message]
+//                        messages?.appendContentsOf(fetchedMessages!)
+//                    }catch let err{
+//                        print(err)
+//                    }
+//                }
+//                messages = messages?.sort({$0.date?.compare($1.date!) == .OrderedDescending})
+//            }
+//            
+//        }
+//    }
+//    
+//    func fetchFriends() -> [Friend]?{
+//        let delegate = UIApplication.sharedApplication().delegate as? AppDelegate
+//        
+//        if let context = delegate?.managedObjectContext{
+//            let request = NSFetchRequest(entityName: "Friend")
+//            
+//            do{
+//                return try context.executeFetchRequest(request) as? [Friend]
+//            }catch let err{
+//                print(err)
+//            }
+//            
+//        }
+//        
+//        return nil
+//    }
     
 }

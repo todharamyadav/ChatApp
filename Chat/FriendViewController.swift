@@ -14,12 +14,16 @@ class FriendViewController: UICollectionViewController {
     var messages: [Message]?
     
     lazy var fetchResultController: NSFetchedResultsController = {
+        let fetchRequest = NSFetchRequest(entityName: "Friend")
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: "lastMessage.date", ascending: false)]
+        fetchRequest.predicate = NSPredicate(format: "lastMessage != nil")
         let delegate = UIApplication.sharedApplication().delegate as! AppDelegate
         let context = delegate.managedObjectContext
-        let fetchRequest = NSFetchRequest(entityName: "Friend")
         
         let frc = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
-    }
+        
+        return frc
+    }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,6 +34,15 @@ class FriendViewController: UICollectionViewController {
         collectionView?.alwaysBounceVertical = true
         
         setUpData()
+        
+        do{
+            try fetchResultController.performFetch()
+        }
+        catch let err{
+            print(err)
+        }
+        
+        
     }
 
     override func didReceiveMemoryWarning() {
@@ -38,7 +51,7 @@ class FriendViewController: UICollectionViewController {
     }
     
     override func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        if let count = messages?.count{
+        if let count = fetchResultController.sections?[section].numberOfObjects{
             return count
         }
         
@@ -53,10 +66,16 @@ class FriendViewController: UICollectionViewController {
         cell.readReceiptImageView.layer.cornerRadius = cell.readReceiptImageView.frame.size.width/2
         cell.readReceiptImageView.layer.masksToBounds = true
         
-        if let message = messages?[indexPath.item]{
-            cell.message = message
-            
-        }
+        let friend = fetchResultController.objectAtIndexPath(indexPath) as! Friend
+        
+        cell.message = friend.lastMessage
+        
+        
+        
+//        if let message = messages?[indexPath.item]{
+//            cell.message = message
+//            
+//        }
         
         return cell
         
@@ -76,7 +95,8 @@ class FriendViewController: UICollectionViewController {
     override func collectionView(collectionView: UICollectionView, didSelectItemAtIndexPath indexPath: NSIndexPath) {
         let layout = UICollectionViewFlowLayout()
         let controller = chatLogCollectionViewController(collectionViewLayout: layout)
-        controller.friend = messages?[indexPath.item].friend
+        let friend = fetchResultController.objectAtIndexPath(indexPath) as! Friend
+        controller.friend = friend
         navigationController?.pushViewController(controller, animated: true)
         
     }
